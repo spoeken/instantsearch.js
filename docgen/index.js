@@ -38,8 +38,8 @@ const build = (clean, cb) => metalsmith(__dirname)
   }))
   .use(ignore(/assets\/js\/(.*)?\.js$/))
   .use(onlyChanged)
+  // // debug
   // .use((files, m, done) => {
-  //   // debug
   //   console.log(Object.keys(files));
   //   done(null);
   // })
