@@ -20,7 +20,9 @@ export default {
   module: {
     loaders: [{
       test: /\.js$/, exclude: /node_modules/, loader: 'babel',
-    }],
+    },
+      {test: /\.css$/, exclude: /\.useable\.css$/, loader: "style!css"},
+    ],
   },
   resolve: {
     alias: {

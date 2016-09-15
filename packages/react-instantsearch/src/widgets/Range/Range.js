@@ -4,6 +4,11 @@ import themeable from '../../core/themeable';
 import translatable from '../../core/translatable';
 
 import Slider from '../../components/Slider';
+import {StyleSheet, css} from 'aphrodite';
+/*
+import style from './defaultThemeCssModule.css';
+*/
+import theme from './defaultThemeAphrodite';
 
 class Range extends Component {
   static propTypes = {

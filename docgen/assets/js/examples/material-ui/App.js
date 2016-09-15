@@ -270,11 +270,7 @@ function CustomHits({hits, marginLeft}) {
 
 function MaterialUiClearAllFilters({filters, refine}) {
   return (
-    <FlatButton
-      onTouchTap={() => refine(filters)}
-      label="Clear All"
-      style={{height: 48, width: 400, backgroundColor: 'white'}}
-    />
+    <div>TOTO</div>
   );
 }
 
