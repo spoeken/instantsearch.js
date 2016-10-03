@@ -9,8 +9,24 @@ block content
   h2 Description
   p=description
   h2 Props
+  p These are the props exposed by the resulting Component.
   if proptype
     each type in proptype
+      .DocProps
+        .Prop
+          #default-props-entry-hitsPerPage.Entry
+            .Entry__head
+              span.Entry__name=type.name
+              span.Entry__type
+                code=type.type
+              span.Entry__link
+                a(href='#default-props-entry-hitsPerPage') #
+            .Entry__description
+              p=type.description
+  h2 Provided props
+  p These are the props that the wrapped Component will receive.
+  if providedproptype
+    each type in providedproptype
       .DocProps
         .Prop
           #default-props-entry-hitsPerPage.Entry

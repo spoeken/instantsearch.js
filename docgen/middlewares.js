@@ -8,9 +8,8 @@ import sass from 'metalsmith-sass';
 import assets from './plugins/assets.js';
 import helpers from './plugins/helpers.js';
 import ignore from './plugins/ignore.js';
-import inlineProps from './plugins/inlineProps/index.js';
+import jsdoc from './plugins/jsdoc-data.js';
 import onlyChanged from './plugins/onlyChanged.js';
-import source from './plugins/source.js';
 import webpackEntryMetadata from './plugins/webpackEntryMetadata.js';
 
 // performance and debug info for metalsmith, when needed see usage below
@@ -20,22 +19,8 @@ import renderer from './mdRenderer.js';
 import webpackStartConfig from './webpack.config.start.babel.js';
 import webpackBuildConfig from './webpack.config.build.babel';
 
-import {reactPackage} from './path.js';
-
-// let's add all the source files from packages/react-instantsearch/widgets/**/*.md
-const reactReadmes = source(reactPackage('src'), reactPackage('src/widgets/**/*.md'), (name, file) =>
-  [
-    name.replace(/widgets\/(.*)\/README\.md/, '$1.md'),
-    {
-      ...file,
-      path: reactPackage('src', name),
-    },
-  ]
-);
-
 const common = [
   helpers,
-  reactReadmes,
   assets({
     source: './assets/',
     destination: './assets/',
@@ -63,6 +48,9 @@ const common = [
   }),
   markdown({
     renderer,
+  }),
+  jsdoc({
+    src: '../packages/react-instantsearch/src/widgets/Hits/@(index|connect).js',
   }),
   headings('h2'),
   // After markdown, so that paths point to the correct HTML file
@@ -99,7 +87,6 @@ export const start = [
   webpackEntryMetadata(webpackStartConfig),
   ...common,
   onlyChanged,
-  inlineProps,
   layouts('pug'),
 ];
 
@@ -116,6 +103,5 @@ export const build = [
     },
   }),
   ...common,
-  inlineProps,
   layouts('pug'),
 ];
