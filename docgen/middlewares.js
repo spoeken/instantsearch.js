@@ -3,6 +3,7 @@ import layouts from 'metalsmith-layouts';
 import markdown from 'metalsmith-markdown';
 import msWebpack from 'ms-webpack';
 import navigation from 'metalsmith-navigation';
+import nav from './plugins/navigation.js';
 import sass from 'metalsmith-sass';
 
 import assets from './plugins/assets.js';
@@ -49,17 +50,22 @@ const common = [
   markdown({
     renderer,
   }),
-  jsdoc({
-    src: '../packages/react-instantsearch/src/widgets/Hits/@(index|connect).js',
-  }),
   headings('h2'),
+  jsdoc({
+    src: '../packages/react-instantsearch/src/widgets/*/@(index|connect).js',
+  }),
+  nav(),
   // After markdown, so that paths point to the correct HTML file
   navigation({
     core: {
       sortBy: 'nav_sort',
       filterProperty: 'nav_groups',
     },
-    widgets: {
+    widget: {
+      sortBy: 'nav_sort',
+      filterProperty: 'nav_groups',
+    },
+    connector: {
       sortBy: 'nav_sort',
       filterProperty: 'nav_groups',
     },

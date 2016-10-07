@@ -17,7 +17,7 @@ const cssFiles = join(__dirname, '../src/stylesheets/**/*');
 const CSSEntryPoints = ['index.css'];
 
 const hasChanged = file => {
-  if (file.stats.ctime) {
+  if (file.stats && file.stats.ctime) {
     return Date.parse(file.stats.ctime) > lastRunTime || Date.parse(file.stats.mtime) > lastRunTime;
   } else {
     return true;

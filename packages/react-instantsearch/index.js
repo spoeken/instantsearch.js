@@ -17,7 +17,7 @@ import Loading from './src/widgets/Loading/index.js';
 import EmptyQuery from './src/widgets/EmptyQuery/index.js';
 import NoResults from './src/widgets/NoResults/index.js';
 import Stats from './src/widgets/Stats/index.js';
-import Error from './src/widgets/Error/index.js';
+import Error from './src/widgets/ErrorMessage/index.js';
 import ScrollTo from './src/widgets/ScrollTo/index.js';
 
 // Doing `export {default as Thing} from 'thing'` causes warnings with

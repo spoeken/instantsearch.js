@@ -2,6 +2,7 @@ import collectJson from 'collect-json';
 import jsdocParse from 'jsdoc-parse';
 import forEach from 'lodash/forEach';
 import groupBy from 'lodash/groupBy';
+import map from 'lodash/map';
 
 export default function(opts) {
   if (!opts.src) throw new Error('opts.src must be defined');
@@ -16,18 +17,19 @@ export default function(opts) {
         'category'
       );
 
-      forEach(symbolsByCategory, (symbols, category) => {
+      forEach(symbolsByCategory, symbols => {
         forEach(symbols, data => {
-          const filename = `${category}/${data.name}.html`;
+          const filename = `${data.category}/${data.name}.html`;
           const customTags = parseCustomTags(data.customTags);
-          files[filename] = { // eslint-disable-line quote-props
+
+          files[filename] = {
             ...data,
             ...customTags,
             mode: '0764',
             contents: '',
             title: `${data.name} ${data.category}`,
             layout: `${data.category}.pug`,
-            'nav_groups': [category],
+            category: data.category,
           };
         });
       });
@@ -37,33 +39,53 @@ export default function(opts) {
   };
 }
 
+/**
+ * This regexp aims to parse the following kind of jsdoc tag values:
+ *  1 - `{boolean} [showMore=false] - description`
+ *  2 - `{boolean} showMore - description`
+ * The groups output for 1/ are:
+ * [
+ *   '{boolean} [showMore=false] - description',
+ *   'boolean',
+ *   '[',
+ *   'showMore',
+ *   'false',
+ *   'description'
+ * ]
+ * the first square bracket is  matched in order to detect optional parameter
+ */
+const typeNameValueDescription = /\{(.+)\} (?:(\[?)(\S+?)(?:=(\S+?))?\]? - )?(.+)/;
+function parseTypeNameValueDescription(v) {
+  const parsed = typeNameValueDescription.exec(v);
+  if (!parsed) return null;
+  return {
+    type: parsed[1],
+    isOptional: parsed[2] === '[',
+    name: parsed[3],
+    defaultValue: parsed[4],
+    description: parsed[5],
+  };
+}
+
+/**
+ * This regexp aims to parse simple key description tag values. Example
+ *  showMore - container for the show more button
+ */
+const keyDescription = /(?:(\S+) - )?(.+)/;
+function parseKeyDescription(v) {
+  const parsed = keyDescription.exec(v);
+  if (!parsed) return null;
+  return {
+    key: parsed[1],
+    description: parsed[2],
+  };
+}
+
 const customTagParsers = {
-  proptype: v => {
-    const parsed = (/\{(\S+)\} (?:(\S+) - )?(.+)/).exec(v);
-    if (!parsed) return null;
-    return {
-      type: parsed[1],
-      name: parsed[2],
-      description: parsed[3],
-    };
-  },
-  providedproptype: v => {
-    const parsed = (/\{(\S+)\} (?:(\S+) - )?(.+)/).exec(v);
-    if (!parsed) return null;
-    return {
-      type: parsed[1],
-      name: parsed[2],
-      description: parsed[3],
-    };
-  },
-  themekey: v => {
-    const parsed = (/(?:(\S+) - )?(.+)/).exec(v);
-    if (!parsed) return null;
-    return {
-      key: parsed[1],
-      description: parsed[2],
-    };
-  },
+  proptype: parseTypeNameValueDescription,
+  providedproptype: parseTypeNameValueDescription,
+  themekey: parseKeyDescription,
+  translationkey: parseKeyDescription,
 };
 
 function parseCustomTags(customTagObjects) {
